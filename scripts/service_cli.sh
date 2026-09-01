@@ -177,10 +177,39 @@ set_bot_mode() {
   mv "$temp_file" .env
 }
 
+show_mode_description() {
+  local mode="$1"
+  printf "\n${COLOR}ОПИСАНИЕ БОТА${RESET}\n\n"
+  case "$mode" in
+    business)
+      cat <<'EOF'
+Добро пожаловать в Business Tool!
+
+Этот бот помогает предпринимателям находить точки роста, улучшать продажи,
+выстраивать воронки, рекламу и трафик. Выберите нужный раздел, чтобы получить
+практические рекомендации, инструменты и шаблоны для развития бизнеса.
+EOF
+      ;;
+    redirect)
+      cat <<'EOF'
+Добро пожаловать в простовпн
+С нами можете забыть о всех проблемах с интернетом. Наш бот ускоряет работу
+многих сервисов и создает комфорт в интернете.
+
+У нас есть приятные бонусы для новых пользователей.
+Для начала нажмите кнопку снизу.
+EOF
+      ;;
+  esac
+  printf '\n'
+}
+
 switch_mode() {
   local mode="$1" label="$2"
+  run_hidden "Обновление описания Telegram-бота" compose run --rm --no-deps bot python scripts/update_bot_description.py "$mode"
   set_bot_mode "$mode"
   ok "Выбран режим: $label"
+  show_mode_description "$mode"
   run_hidden "Переключение версии бота" compose up -d --force-recreate "${SERVICES[@]}"
   checklist running
 }
