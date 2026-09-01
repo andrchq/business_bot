@@ -3,9 +3,13 @@
 import argparse
 import asyncio
 from pathlib import Path
+import sys
 
 from aiogram import Bot
 from aiogram.types import FSInputFile, InputProfilePhotoStatic
+
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_DIR))
 
 from config import BOT_TOKEN
 
@@ -26,7 +30,6 @@ DESCRIPTIONS = {
     ),
 }
 
-PROJECT_DIR = Path(__file__).resolve().parent.parent
 PROFILE_PHOTOS = {
     "business": PROJECT_DIR / "images" / "avatar.png",
     "redirect": PROJECT_DIR / "images" / "redirect_avatar.png",
