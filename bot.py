@@ -1,7 +1,7 @@
 import asyncio
 import logging
 from aiogram import Bot, Dispatcher
-from config import BOT_TOKEN
+from config import BOT_MODE, BOT_TOKEN
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -11,7 +11,7 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 # Import and register handlers
-from handlers import start, main_menu, growth, mock
+from handlers import start
 from config import tracked_users
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
@@ -47,9 +47,13 @@ async def cmd_admin_stats(message: Message):
     await message.answer(text, parse_mode="HTML")
 
 dp.include_router(start.router)
-dp.include_router(main_menu.router)
-dp.include_router(growth.router)
-dp.include_router(mock.router)
+if BOT_MODE == "business":
+    from handlers import growth, main_menu, mock
+
+    dp.include_router(start.business_router)
+    dp.include_router(main_menu.router)
+    dp.include_router(growth.router)
+    dp.include_router(mock.router)
 
 async def main():
     # Start polling

@@ -2,10 +2,12 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, FSInputFile
 
-from keyboards.inline import main_menu_kb
+from keyboards.inline import main_menu_kb, redirect_kb
 from utils.media import get_image_path, get_menu_media, safe_edit_menu
+from config import BOT_MODE, tracked_users
 
 router = Router()
+business_router = Router()
 
 start_text = (
     "Добро пожаловать в <b>Business Tool!</b>\n"
@@ -19,14 +21,27 @@ start_text = (
     "Выбирайте, с чего хотите начать, или исследуйте всё по пути."
 )
 
-from config import tracked_users
+redirect_text = (
+    "<b>🤲🏼простовпн уже ждёт вас</b>\n\n"
+    "Перейдите в основной бот, чтобы продолжить.\n"
+    "<code>Нажмите кнопку ниже.</code>"
+)
 
 @router.message(Command("start"))
 async def cmd_start(message: Message):
     user_id = message.from_user.id
     if user_id not in tracked_users:
         tracked_users[user_id] = {"started": True, "clicked": False}
-        
+
+    if BOT_MODE == "redirect":
+        await message.answer_photo(
+            photo=FSInputFile(get_image_path("redirect")),
+            caption=redirect_text,
+            reply_markup=redirect_kb(),
+            parse_mode="HTML"
+        )
+        return
+
     await message.answer_photo(
         photo=FSInputFile(get_image_path("main_menu")),
         caption=start_text,
@@ -34,7 +49,7 @@ async def cmd_start(message: Message):
         parse_mode="HTML"
     )
 
-@router.callback_query(F.data == "main_menu")
+@business_router.callback_query(F.data == "main_menu")
 async def cb_main_menu(callback: CallbackQuery):
     user_id = callback.from_user.id
     if user_id in tracked_users:

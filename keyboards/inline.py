@@ -1,6 +1,19 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+REDIRECT_URL = "https://t.me/prstabot"
+
+def redirect_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(
+            text="ОТКРЫТЬ",
+            url=REDIRECT_URL,
+            style="danger"
+        )
+    )
+    return builder.as_markup()
+
 def main_menu_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(InlineKeyboardButton(text="Найти точку роста", callback_data="find_growth_point"))
