@@ -206,7 +206,6 @@ EOF
 
 switch_mode() {
   local mode="$1" label="$2"
-  run_hidden "Обновление профиля Telegram-бота" compose run --rm --no-deps bot python scripts/update_bot_description.py "$mode"
   set_bot_mode "$mode"
   ok "Выбран режим: $label"
   show_mode_description "$mode"
